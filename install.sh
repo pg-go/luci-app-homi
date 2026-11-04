@@ -3,14 +3,14 @@
 # Homi 一键安装脚本
 #
 # 用法：
-#   curl -fsSL https://raw.githubusercontent.com/pg-go/Homi/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/pg-go/luci-app-homi/main/install.sh | sh
 #   或下载后执行：sh install.sh [版本号]
 #   不带版本号默认安装最新 Release。
 #
 
 set -e
 
-REPO="pg-go/Homi"
+REPO="pg-go/luci-app-homi"
 VERSION="${1:-latest}"
 
 # 只要 OpenWrt

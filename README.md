@@ -28,7 +28,7 @@
 ## 一键安装
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pg-go/Homi/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/pg-go/luci-app-homi/main/install.sh | sh
 ```
 
 脚本会自动识别 CPU 架构（x86_64 / aarch64 / armv7）和包管理器（opkg 装 ipk，apk 装 apk），从 GitHub Release 下载对应安装包并安装。

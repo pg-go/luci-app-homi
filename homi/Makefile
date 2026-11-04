@@ -14,7 +14,7 @@ define Package/homi
   SECTION:=net
   CATEGORY:=Network
   TITLE:=Homi service scripts
-  URL:=https://github.com/pg-go/Homi
+  URL:=https://github.com/pg-go/luci-app-homi
   DEPENDS:=+mihomo +yq +curl +ca-bundle +unzip
 endef
 

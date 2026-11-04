@@ -40,7 +40,7 @@ return view.extend({
 		const configs = (data[3] && data[3].configs) || [];
 
 		let m = new form.Map('homi', _('Homi'),
-			`${_('在 OpenWrt 上使用 Mihomo 内核运行你的配置。')} <a href="https://github.com/pg-go/Homi" target="_blank">${_('使用说明')}</a>`);
+			`${_('在 OpenWrt 上使用 Mihomo 内核运行你的配置。')} <a href="https://github.com/pg-go/luci-app-homi" target="_blank">${_('使用说明')}</a>`);
 		let s = m.section(form.NamedSection, 'main', _('基本设置'));
 		let o = s.option(form.Flag, 'enabled', _('启用'), _('开机自动启动 Mihomo 内核，勾选后点下方「保存并应用」'));
 		o.rmempty = false;

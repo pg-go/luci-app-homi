@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mihomo
-PKG_VERSION:=1.19.33
+PKG_VERSION:=1.19.34
 
 PKG_SOURCE:=v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo/archive/refs/tags/
-PKG_HASH:=e7c596b37ff27ec487d19b1920f73e0c97a78067ea35766530ee9659ade72711
+PKG_HASH:=e3284a44f1052f1c454c90d418faa244516c2470bf232b455ea18fc4f5fa6028
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_MAINTAINER:=pg-go

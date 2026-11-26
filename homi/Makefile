@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=homi
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=11
+PKG_RELEASE:=12
 PKGARCH:=all
 
 PKG_LICENSE:=MIT
@@ -48,6 +48,8 @@ define Package/homi/install
 	# 内置 MMDB：构建时由 workflow 下载放入 files/，缺失则跳过（运行时再下载，不阻塞构建）
 	$(INSTALL_DIR) $(1)/usr/share/homi
 	[ -f $(CURDIR)/files/usr/share/homi/geoip.metadb ] && $(INSTALL_DATA) $(CURDIR)/files/usr/share/homi/geoip.metadb $(1)/usr/share/homi/geoip.metadb || true
+	# 内置面板：同上，缺失则跳过（运行时再下载，不阻塞构建）
+	[ -f $(CURDIR)/files/usr/share/homi/dist.zip ] && $(INSTALL_DATA) $(CURDIR)/files/usr/share/homi/dist.zip $(1)/usr/share/homi/dist.zip || true
 
 	$(INSTALL_DIR) $(1)/lib/upgrade/keep.d
 	$(INSTALL_DATA) $(CURDIR)/files/lib/upgrade/keep.d/homi $(1)/lib/upgrade/keep.d/homi

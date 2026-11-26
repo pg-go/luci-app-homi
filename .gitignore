@@ -2,3 +2,5 @@
 mihomo/files/mihomo
 # 构建时由 workflow 下载的内置 MMDB，不提交（本地测试下载的同名文件也不提交）
 homi/files/usr/share/homi/geoip.metadb
+# 构建时由 workflow 下载的内置面板，不提交
+homi/files/usr/share/homi/dist.zip

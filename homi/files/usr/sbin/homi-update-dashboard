@@ -10,6 +10,7 @@
 
 UI_DIR="${2:-/etc/homi/ui}"
 URL="https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+BUNDLED=/usr/share/homi/dist.zip
 
 log() { /usr/sbin/homi-log "[App] $1" 2>/dev/null; }
 
@@ -34,11 +35,17 @@ flatten_ui() {
 do_download() {
 	TMPDIR="$(mktemp -d)" || return 1
 	trap 'rm -rf "$TMPDIR"' EXIT INT TERM
-	log "面板缺失，开始下载…"
-	if command -v curl >/dev/null 2>&1; then
-		curl -fsSL --max-time 120 -o "$TMPDIR/ui.zip" "$URL" || return 1
+	# 优先用包内置的面板（新装不用等下载）；内置的也没有才联网下载
+	if [ -f "$BUNDLED" ]; then
+		log "面板使用内置版本"
+		cp "$BUNDLED" "$TMPDIR/ui.zip" || return 1
 	else
-		wget -T 120 -O "$TMPDIR/ui.zip" "$URL" || return 1
+		log "面板缺失，开始下载…"
+		if command -v curl >/dev/null 2>&1; then
+			curl -fsSL --max-time 120 -o "$TMPDIR/ui.zip" "$URL" || return 1
+		else
+			wget -T 120 -O "$TMPDIR/ui.zip" "$URL" || return 1
+		fi
 	fi
 	# 简单校验：包里得有 index.html（防止下到错误页面）
 	if ! unzip -l "$TMPDIR/ui.zip" 2>/dev/null | grep -q "index.html"; then

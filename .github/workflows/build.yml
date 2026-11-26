@@ -37,6 +37,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
+      - name: 下载内置 MMDB 与面板
+        run: |
+          # 新装不用等下载：把最新 geoip.metadb 与 zashboard 面板打进 homi 包；下载失败也不阻塞构建
+          mkdir -p homi/files/usr/share/homi
+          curl -fsSL --max-time 120 "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb" -o homi/files/usr/share/homi/geoip.metadb || echo "MMDB 下载失败，继续构建（运行时再下载）"
+          curl -fsSL --max-time 120 "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip" -o homi/files/usr/share/homi/dist.zip || echo "面板下载失败，继续构建（运行时再下载）"
+          ls -lh homi/files/usr/share/homi/ || true
+
       - name: build
         uses: openwrt/gh-action-sdk@main
         env:

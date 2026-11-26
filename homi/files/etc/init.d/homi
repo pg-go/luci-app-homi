@@ -69,6 +69,8 @@ start_service() {
 	procd_set_param stderr 0
 	procd_close_instance
 	plog "[App] 内核已启动"
+	# 内核起来后，后台检查 MMDB 更新（不阻塞启动；内置版先顶着，最新版下回来再换）
+	( sleep 60; /usr/sbin/homi-update-mmdb ) >/dev/null 2>&1 &
 }
 
 reload_service() {

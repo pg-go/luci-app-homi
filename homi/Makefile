@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=homi
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=10
+PKG_RELEASE:=11
 PKGARCH:=all
 
 PKG_LICENSE:=MIT
@@ -14,7 +14,7 @@ define Package/homi
   SECTION:=net
   CATEGORY:=Network
   TITLE:=Homi service scripts
-  URL:=https://github.com/pg-go/luci-app-homi
+  URL:=https://github.com/pg-go/Homi
   DEPENDS:=+mihomo +yq +curl +ca-bundle +unzip
 endef
 
@@ -42,7 +42,12 @@ define Package/homi/install
 	$(INSTALL_BIN) $(CURDIR)/files/usr/sbin/homi-update-dashboard $(1)/usr/sbin/homi-update-dashboard
 	$(INSTALL_BIN) $(CURDIR)/files/usr/sbin/homi-log $(1)/usr/sbin/homi-log
 	$(INSTALL_BIN) $(CURDIR)/files/usr/sbin/homi-fetch-mmdb $(1)/usr/sbin/homi-fetch-mmdb
+	$(INSTALL_BIN) $(CURDIR)/files/usr/sbin/homi-update-mmdb $(1)/usr/sbin/homi-update-mmdb
 	$(INSTALL_BIN) $(CURDIR)/files/usr/sbin/homi-update-rules $(1)/usr/sbin/homi-update-rules
+
+	# 内置 MMDB：构建时由 workflow 下载放入 files/，缺失则跳过（运行时再下载，不阻塞构建）
+	$(INSTALL_DIR) $(1)/usr/share/homi
+	[ -f $(CURDIR)/files/usr/share/homi/geoip.metadb ] && $(INSTALL_DATA) $(CURDIR)/files/usr/share/homi/geoip.metadb $(1)/usr/share/homi/geoip.metadb || true
 
 	$(INSTALL_DIR) $(1)/lib/upgrade/keep.d
 	$(INSTALL_DATA) $(CURDIR)/files/lib/upgrade/keep.d/homi $(1)/lib/upgrade/keep.d/homi

@@ -1,0 +1,55 @@
+#!/bin/sh
+# 启动正常后自动检查 MMDB 更新：下载最新版，比对后有变化才替换并重载 mihomo
+# 用法：homi-update-mmdb [超时秒数，默认 60]
+# 只在后台跑（启动后延时触发，或“更新规则”时顺手触发），从不阻塞启动；
+# 12 小时内检查成功过就跳过，避免频繁下载和重启；下载失败不记时间，下次再试
+HOME_DIR=/etc/homi
+MMDB_URL="https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+TIMEOUT="${1:-60}"
+LASTCHECK=/tmp/homi-mmdb-lastcheck
+
+# 12 小时节流（date 拿不到时间戳时不节流，直接检查）
+NOW=$(date +%s 2>/dev/null || echo 0)
+if [ "$NOW" != "0" ] && [ -f "$LASTCHECK" ]; then
+	LAST=$(cat "$LASTCHECK" 2>/dev/null || echo 0)
+	if [ "$LAST" != "0" ]; then
+		DIFF=$((NOW - LAST))
+		[ "$DIFF" -lt 43200 ] && exit 0
+	fi
+fi
+
+tmp="$HOME_DIR/geoip.metadb.$$.tmp"
+if ! curl -fsSL --max-time "$TIMEOUT" "$MMDB_URL" -o "$tmp" >/dev/null 2>&1; then
+	rm -f "$tmp"
+	/usr/sbin/homi-log '[App] MMDB 自动更新检查失败（下载失败），保持当前版本' 2>/dev/null
+	exit 0
+fi
+
+# 比对：有 cmp 用 cmp 精确比对；cmp 不可用时退到文件大小比对，并在日志里记明
+SAME=0
+if command -v cmp >/dev/null 2>&1; then
+	[ -f "$HOME_DIR/geoip.metadb" ] && cmp -s "$tmp" "$HOME_DIR/geoip.metadb" && SAME=1
+else
+	/usr/sbin/homi-log '[App] 命令不支持：cmp，MMDB 比对改用文件大小' 2>/dev/null
+	if [ -f "$HOME_DIR/geoip.metadb" ]; then
+		OLD_SIZE=$(wc -c < "$HOME_DIR/geoip.metadb" 2>/dev/null || echo -1)
+		NEW_SIZE=$(wc -c < "$tmp" 2>/dev/null || echo -2)
+		[ "$OLD_SIZE" = "$NEW_SIZE" ] && SAME=1
+	fi
+fi
+
+if [ "$SAME" = "1" ]; then
+	rm -f "$tmp"
+	[ "$NOW" != "0" ] && echo "$NOW" > "$LASTCHECK"
+	/usr/sbin/homi-log '[App] MMDB 已是最新，无需更新' 2>/dev/null
+	exit 0
+fi
+
+mv "$tmp" "$HOME_DIR/geoip.metadb"
+[ "$NOW" != "0" ] && echo "$NOW" > "$LASTCHECK"
+/usr/sbin/homi-log '[App] MMDB 已更新到最新版本' 2>/dev/null
+# 服务启用时才重载，让新库生效；未启用则下次启动时自然用新库
+if [ "$(uci get homi.main.enabled 2>/dev/null)" = "1" ]; then
+	/etc/init.d/homi reload >/dev/null 2>&1
+fi
+exit 0

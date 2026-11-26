@@ -1,2 +1,4 @@
 # CI 构建时放入的内核二进制，不提交
 mihomo/files/mihomo
+# 构建时由 workflow 下载的内置 MMDB，不提交（本地测试下载的同名文件也不提交）
+homi/files/usr/share/homi/geoip.metadb

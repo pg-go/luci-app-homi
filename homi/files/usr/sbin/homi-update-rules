@@ -93,3 +93,5 @@ rm -rf "$TMPDIR"
 emit "{\"updated\":$UPDATED,\"failed\":[$FAILED_JSON],\"total\":$TOTAL}"
 # 应用日志里记一行完成（前端轮询若因切页面而死，这行仍能保证日志里有结果，不再静默）
 homi-log "[App] 规则更新完成：成功 $UPDATED 个，失败 $FAILED 个，共 $TOTAL 个"
+# 顺手后台检查 MMDB 更新（不阻塞本次规则更新的结果返回）
+( /usr/sbin/homi-update-mmdb ) >/dev/null 2>&1 &
